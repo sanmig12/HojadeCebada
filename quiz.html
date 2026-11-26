@@ -75,9 +75,43 @@
       0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
       40% { transform: scale(1); opacity: 1; }
     }
+
+    #aiResponseText, #aiResponseText * {
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none;
+    }
+    #securityOverlay {
+      position: fixed; inset: 0; z-index: 1000; display: flex;
+      align-items: center; justify-content: center; padding: 1.25rem;
+      background: rgba(2, 6, 23, .98); backdrop-filter: blur(14px);
+    }
+    #securityOverlay.hidden { display: none; }
+    .open-answer {
+      width: 100%; min-height: 130px; resize: vertical;
+      background: rgba(15,23,42,.9); color: #f1f5f9;
+      border: 1px solid #475569; border-radius: 12px;
+      padding: 14px; outline: none;
+    }
+    .open-answer:focus { border-color: #818cf8; box-shadow: 0 0 0 2px rgba(99,102,241,.2); }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white transition-colors duration-300">
+
+  <!-- BLOQUEO DE SEGURIDAD / PANTALLA COMPLETA -->
+  <div id="securityOverlay">
+    <div class="glass-card max-w-xl w-full rounded-2xl p-7 text-center border border-indigo-500/30 shadow-2xl">
+      <div class="text-4xl mb-4">🔒</div>
+      <h2 id="securityTitle" class="font-display text-2xl font-extrabold text-white mb-3">Examen en pantalla completa</h2>
+      <p id="securityMessage" class="text-slate-300 text-sm leading-relaxed mb-6">
+        Para comenzar, activa la pantalla completa. Si sales de ella, cambias de pestaña o abandonas la ventana, se registrará una incidencia y el intento se reiniciará.
+      </p>
+      <button id="securityStartBtn" class="w-full px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold shadow-lg">
+        Activar pantalla completa y comenzar
+      </button>
+      <p class="text-xs text-slate-500 mt-4">No cierres ni recargues la página durante el examen.</p>
+    </div>
+  </div>
 
   <!-- TOP HEADER / NAV -->
   <header class="border-b border-slate-800 bg-slate-900/80 sticky top-0 z-30 backdrop-blur-md">
@@ -127,7 +161,7 @@
           ¿Aprendizaje autónomo o asistencia inteligente?
         </h2>
         <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-4">
-          Resuelve este cuestionario de 10 preguntas fundamentales de 5 asignaturas escolares. Si te trabas en algún problema, puedes apoyarte en el botón secreto de <span class="text-indigo-400 font-semibold">Gemini IA</span> para recibir explicaciones paso a paso. Al final analizaremos tu rendimiento autónomo vs. asistido.
+          Resuelve este cuestionario de 15 preguntas de 5 asignaturas escolares, incluyendo preguntas de opción múltiple y preguntas abiertas. Si te trabas en algún problema, puedes apoyarte en el botón secreto de <span class="text-indigo-400 font-semibold">Gemini IA</span> para recibir explicaciones paso a paso. Al final analizaremos tu rendimiento autónomo vs. asistido.
         </p>
 
         <div class="flex flex-wrap gap-2 text-xs font-medium text-slate-400">
@@ -412,6 +446,32 @@
           ]
         }
       }
+      ,
+      {
+        id: 11, subject: "Álgebra", subjectBadgeClass: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+        open: true, question: "Explica con tus propias palabras cómo despejarías x en la ecuación 4x - 8 = 20. Escribe el procedimiento completo.",
+        explanation: { steps: ["Primero se suma 8 a ambos lados: 4x = 28.", "Después se divide entre 4: x = 7.", "Explica cada operación y por qué se realiza."] }
+      },
+      {
+        id: 12, subject: "Cálculo", subjectBadgeClass: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+        open: true, question: "¿Qué diferencia existe entre la derivada y la integral de una función? Explica y proporciona un ejemplo de uso de cada una.",
+        explanation: { steps: ["La derivada representa una tasa de cambio instantánea o pendiente.", "La integral representa acumulación y, en condiciones apropiadas, área bajo la curva."] }
+      },
+      {
+        id: 13, subject: "Gramática / Español", subjectBadgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+        open: true, question: "Escribe una oración que contenga un sujeto tácito. Después identifica cuál es el sujeto y explica cómo lo reconociste.",
+        explanation: { steps: ["El sujeto tácito no aparece escrito, pero se deduce por la conjugación del verbo.", "Ejemplo: “Llegamos temprano”. El sujeto es nosotros/nosotras."] }
+      },
+      {
+        id: 14, subject: "Historia", subjectBadgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+        open: true, question: "Describe dos consecuencias importantes de la Segunda Guerra Mundial y explica por qué fueron relevantes.",
+        explanation: { steps: ["Entre las consecuencias se encuentran la creación de la ONU, la división de Alemania y el nuevo orden mundial de la Guerra Fría.", "La respuesta debe explicar la relevancia de dos consecuencias."] }
+      },
+      {
+        id: 15, subject: "Química", subjectBadgeClass: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+        open: true, question: "Explica qué significa que el carbono sea tetravalente y menciona por qué esta propiedad es importante en la química orgánica.",
+        explanation: { steps: ["El carbono puede formar cuatro enlaces covalentes.", "Esto permite construir cadenas y estructuras moleculares complejas, base de muchos compuestos orgánicos."] }
+      }
     ];
 
     let currentQuestionIndex = 0;
@@ -427,6 +487,84 @@
     const progressBar = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
     const resetQuizBtn = document.getElementById('resetQuizBtn');
+    const securityOverlay = document.getElementById('securityOverlay');
+    const securityTitle = document.getElementById('securityTitle');
+    const securityMessage = document.getElementById('securityMessage');
+    const securityStartBtn = document.getElementById('securityStartBtn');
+    let examStarted = false;
+    let securityLocked = false;
+    const EXAM_ACTIVE_KEY = 'iaQuizAttemptActive_v1';
+    const EXAM_VIOLATION_KEY = 'iaQuizViolation_v1';
+
+    function showSecurityLock(reason) {
+      if (securityLocked) return;
+      securityLocked = true;
+      examStarted = false;
+      localStorage.setItem(EXAM_VIOLATION_KEY, reason || 'Incidencia de seguridad');
+      localStorage.removeItem(EXAM_ACTIVE_KEY);
+      clearTimeout(aiTimer);
+      securityTitle.textContent = 'Incidencia detectada';
+      securityMessage.textContent = (reason || 'Se detectó una salida del entorno del examen.') +
+        '. El intento quedó invalidado. Deberás comenzar desde la primera pregunta.';
+      securityStartBtn.textContent = 'Reiniciar examen';
+      securityOverlay.classList.remove('hidden');
+      initQuiz();
+    }
+
+    async function startSecureExam() {
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch (err) {
+        securityTitle.textContent = 'No se pudo activar pantalla completa';
+        securityMessage.textContent = 'Tu navegador bloqueó la pantalla completa. Presiona el botón nuevamente y acepta la solicitud del navegador.';
+        return;
+      }
+      securityLocked = false;
+      examStarted = true;
+      localStorage.setItem(EXAM_ACTIVE_KEY, '1');
+      localStorage.removeItem(EXAM_VIOLATION_KEY);
+      securityOverlay.classList.add('hidden');
+      initQuiz();
+    }
+
+    securityStartBtn.addEventListener('click', startSecureExam);
+
+    document.addEventListener('fullscreenchange', () => {
+      if (examStarted && !document.fullscreenElement) {
+        showSecurityLock('Saliste del modo de pantalla completa');
+      }
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (examStarted && document.hidden) {
+        showSecurityLock('Cambiaste de pestaña o minimizaste la ventana');
+      }
+    });
+    window.addEventListener('blur', () => {
+      if (examStarted) showSecurityLock('La ventana del examen perdió el foco');
+    });
+
+    // Si el navegador se cerró, se apagó el equipo o se recargó durante un intento,
+    // la marca persistente permite invalidarlo cuando la página vuelva a abrirse.
+    if (localStorage.getItem(EXAM_ACTIVE_KEY) === '1' ||
+        localStorage.getItem(EXAM_VIOLATION_KEY)) {
+      securityLocked = true;
+      localStorage.removeItem(EXAM_ACTIVE_KEY);
+      securityTitle.textContent = 'Intento interrumpido';
+      securityMessage.textContent = 'Se detectó que el examen anterior fue interrumpido o abandonado. Por seguridad, el intento debe comenzar desde cero.';
+      securityStartBtn.textContent = 'Reiniciar examen';
+    }
+
+    // Bloquea acciones comunes de copiar/pegar únicamente en las respuestas de Gemini.
+    ['copy','cut','paste','contextmenu','selectstart','dragstart'].forEach(evt => {
+      document.getElementById('aiResponseText').addEventListener(evt, e => e.preventDefault());
+    });
+    document.addEventListener('keydown', e => {
+      const inAI = e.target.closest && e.target.closest('#aiResponseText');
+      if (inAI && (e.ctrlKey || e.metaKey) && ['c','x','v','a'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+      }
+    });
+
 
     const aiModal = document.getElementById('aiModal');
     const aiModalContent = document.getElementById('aiModalContent');
@@ -460,6 +598,28 @@
       const savedAnswer = userAnswers[q.id];
       const hasChoice = savedAnswer && savedAnswer.selectedIndex !== null && savedAnswer.selectedIndex !== undefined;
       const letters = ["A", "B", "C", "D"];
+
+      if (q.open) {
+        const priorText = savedAnswer && savedAnswer.text ? savedAnswer.text : "";
+        quizContainer.innerHTML = `
+          <div class="glass-card rounded-2xl p-6 md:p-8 shadow-xl border border-slate-800">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider border ${q.subjectBadgeClass}">${q.subject}</span>
+              <span class="text-xs text-slate-400 font-medium">Pregunta ${index + 1} / ${quizData.length}</span>
+            </div>
+            <h3 class="text-lg md:text-xl font-bold text-white mb-6 leading-snug">${q.question}</h3>
+            <textarea id="openAnswer_${q.id}" class="open-answer" placeholder="Escribe tu respuesta con tus propias palabras...">${priorText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+            <div class="mt-5 flex flex-col sm:flex-row justify-between gap-3">
+              <button onclick="saveOpenAnswer(${q.id})" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold">Guardar respuesta</button>
+              <div class="flex gap-2 justify-end">
+                <button onclick="prevQuestion()" ${isFirst ? 'disabled' : ''} class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 text-slate-300 disabled:opacity-40">Anterior</button>
+                ${isLast ? `<button onclick="finishQuiz()" class="px-5 py-2 text-xs font-bold rounded-xl bg-emerald-600 text-white">Ver resultados</button>` : `<button onclick="nextQuestion()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white">Siguiente</button>`}
+              </div>
+            </div>
+            ${savedAnswer && savedAnswer.text ? '<p class="text-xs text-emerald-400 mt-3">Respuesta guardada</p>' : ''}
+          </div>`;
+        return;
+      }
 
       const optionsHTML = q.options.map((opt, optIdx) => {
         let btnStyle = "bg-slate-800/80 hover:bg-slate-700/80 border-slate-700 text-slate-200";
@@ -575,6 +735,14 @@
       `;
     }
 
+    function saveOpenAnswer(questionId) {
+      const field = document.getElementById(`openAnswer_${questionId}`);
+      if (!field) return;
+      const previous = userAnswers[questionId] || {};
+      userAnswers[questionId] = { ...previous, text: field.value.trim(), usedAI: previous.usedAI || false };
+      renderQuestion(currentQuestionIndex);
+    }
+
     function selectOption(questionId, optionIndex) {
       const q = quizData.find(item => item.id === questionId);
       if (!q) return;
@@ -616,7 +784,7 @@
         aiModalContent.classList.add('scale-100', 'opacity-100');
       });
 
-      const correctOpt = q.options.find(o => o.correct);
+      const correctOpt = q.options ? q.options.find(o => o.correct) : null;
 
       aiTimer = setTimeout(() => {
         aiLoader.classList.add('hidden');
@@ -630,11 +798,7 @@
           <div class="space-y-2.5">
             ${q.explanation.steps.map(step => `<p class="leading-relaxed text-slate-300">${step}</p>`).join('')}
           </div>
-
-          <div class="p-3.5 rounded-xl bg-emerald-950/50 border border-emerald-500/30 flex items-center justify-between gap-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Opción correcta</span>
-            <span class="text-sm font-bold text-emerald-200">${correctOpt ? correctOpt.text : ''}</span>
-          </div>
+          ${correctOpt ? `<div class="p-3.5 rounded-xl bg-emerald-950/50 border border-emerald-500/30 flex items-center justify-between gap-2"><span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Opción correcta</span><span class="text-sm font-bold text-emerald-200">${correctOpt.text}</span></div>` : ''}
         `;
       }, 650);
     }
@@ -666,6 +830,8 @@
     });
 
     function prevQuestion() {
+      const openField = quizData[currentQuestionIndex].open && document.getElementById(`openAnswer_${quizData[currentQuestionIndex].id}`);
+      if (openField) saveOpenAnswer(quizData[currentQuestionIndex].id);
       if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
         renderQuestion(currentQuestionIndex);
@@ -673,6 +839,8 @@
     }
 
     function nextQuestion() {
+      const openField = quizData[currentQuestionIndex].open && document.getElementById(`openAnswer_${quizData[currentQuestionIndex].id}`);
+      if (openField) saveOpenAnswer(quizData[currentQuestionIndex].id);
       if (currentQuestionIndex < quizData.length - 1) {
         currentQuestionIndex++;
         renderQuestion(currentQuestionIndex);
@@ -680,7 +848,10 @@
     }
 
     function finishQuiz() {
+      const activeOpen = quizData[currentQuestionIndex].open && document.getElementById(`openAnswer_${quizData[currentQuestionIndex].id}`);
+      if (activeOpen) userAnswers[quizData[currentQuestionIndex].id] = { ...(userAnswers[quizData[currentQuestionIndex].id] || {}), text: activeOpen.value.trim() };
       const totalQuestions = quizData.length;
+      const objectiveQuestions = quizData.filter(q => !q.open).length;
       let answeredCount = 0;
       let autonomousCorrect = 0;
       let autonomousTotal = 0;
@@ -690,8 +861,9 @@
       const breakdownRows = quizData.map((q, idx) => {
         const ans = userAnswers[q.id];
         const hasChoice = ans && ans.selectedIndex !== null && ans.selectedIndex !== undefined;
+        const hasOpenText = q.open && ans && ans.text && ans.text.trim().length > 0;
 
-        if (hasChoice) answeredCount++;
+        if (hasChoice || hasOpenText) answeredCount++;
         if (hasChoice && ans.isCorrect) totalCorrect++;
         if (ans && ans.usedAI) aiAssistedCount++;
         if (hasChoice && !ans.usedAI) {
@@ -699,8 +871,8 @@
           if (ans.isCorrect) autonomousCorrect++;
         }
 
-        const chosenText = hasChoice ? q.options[ans.selectedIndex]?.text : (ans && ans.usedAI ? "Marcada como IA" : "Sin responder");
-        const correctText = q.options.find(o => o.correct)?.text || "";
+        const chosenText = q.open ? (hasOpenText ? ans.text : "Sin responder") : (hasChoice ? q.options[ans.selectedIndex]?.text : (ans && ans.usedAI ? "Marcada como IA" : "Sin responder"));
+        const correctText = q.options ? (q.options.find(o => o.correct)?.text || "") : "Respuesta abierta: revisión manual";
 
         return `
           <tr class="border-b border-slate-800/80 hover:bg-slate-800/30 transition-colors">
@@ -708,22 +880,24 @@
             <td class="py-3 px-3 text-xs font-semibold text-slate-200">${q.subject}</td>
             <td class="py-3 px-3 text-xs text-slate-300">${chosenText}</td>
             <td class="py-3 px-3 text-xs">
-              ${!hasChoice
-                ? (ans && ans.usedAI
+              ${q.open
+                ? (hasOpenText ? `<span class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-semibold">Pendiente de revisión manual</span>` : `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-semibold">Pendiente</span>`)
+                : (!hasChoice
+                  ? (ans && ans.usedAI
                     ? `<span class="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30 font-semibold">IA (${correctText})</span>`
                     : `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-semibold">Pendiente</span>`)
-                : ans.isCorrect
-                  ? `<span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold">Correcta</span>`
-                  : `<span class="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 font-semibold">Incorrecta (${correctText})</span>`
-              }
+                  : ans.isCorrect
+                    ? `<span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold">Correcta</span>`
+                    : `<span class="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 font-semibold">Incorrecta (${correctText})</span>`)}
             </td>
             <td class="py-3 px-3 text-xs">
-              ${ans && ans.usedAI
-                ? `<span class="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30 font-semibold">IA</span>`
-                : hasChoice
-                  ? `<span class="px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30 font-semibold">Autónomo</span>`
-                  : `<span class="text-slate-500">—</span>`
-              }
+              ${q.open
+                ? (hasOpenText ? `<span class="px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30 font-semibold">Abierta</span>` : `<span class="text-slate-500">—</span>`)
+                : (ans && ans.usedAI
+                  ? `<span class="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30 font-semibold">IA</span>`
+                  : hasChoice
+                    ? `<span class="px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30 font-semibold">Autónomo</span>`
+                    : `<span class="text-slate-500">—</span>`)}
             </td>
           </tr>
         `;
@@ -759,7 +933,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
               <p class="text-xs font-semibold text-slate-400 uppercase">Aciertos Totales</p>
-              <p class="text-2xl md:text-3xl font-display font-extrabold text-emerald-400 mt-1">${totalCorrect} / ${totalQuestions}</p>
+              <p class="text-2xl md:text-3xl font-display font-extrabold text-emerald-400 mt-1">${totalCorrect} / ${objectiveQuestions}</p>
             </div>
             <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
               <p class="text-xs font-semibold text-slate-400 uppercase">Aciertos Autónomos</p>
