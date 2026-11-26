@@ -161,7 +161,7 @@
           ¿Aprendizaje autónomo o asistencia inteligente?
         </h2>
         <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-4">
-          Resuelve este cuestionario de 15 preguntas de 5 asignaturas escolares, incluyendo preguntas de opción múltiple y preguntas abiertas. Si te trabas en algún problema, puedes apoyarte en el botón secreto de <span class="text-indigo-400 font-semibold">Gemini IA</span> para recibir explicaciones paso a paso. Al final analizaremos tu rendimiento autónomo vs. asistido.
+          Resuelve este cuestionario de 10 preguntas de opción múltiple de 5 asignaturas escolares. Si te trabas en algún problema, puedes apoyarte en el botón secreto de <span class="text-indigo-400 font-semibold">Gemini IA</span> para recibir explicaciones paso a paso. Al final analizaremos tu rendimiento autónomo vs. asistido.
         </p>
 
         <div class="flex flex-wrap gap-2 text-xs font-medium text-slate-400">
@@ -446,32 +446,7 @@
           ]
         }
       }
-      ,
-      {
-        id: 11, subject: "Álgebra", subjectBadgeClass: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-        open: true, question: "Explica con tus propias palabras cómo despejarías x en la ecuación 4x - 8 = 20. Escribe el procedimiento completo.",
-        explanation: { steps: ["Primero se suma 8 a ambos lados: 4x = 28.", "Después se divide entre 4: x = 7.", "Explica cada operación y por qué se realiza."] }
-      },
-      {
-        id: 12, subject: "Cálculo", subjectBadgeClass: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
-        open: true, question: "¿Qué diferencia existe entre la derivada y la integral de una función? Explica y proporciona un ejemplo de uso de cada una.",
-        explanation: { steps: ["La derivada representa una tasa de cambio instantánea o pendiente.", "La integral representa acumulación y, en condiciones apropiadas, área bajo la curva."] }
-      },
-      {
-        id: 13, subject: "Gramática / Español", subjectBadgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-        open: true, question: "Escribe una oración que contenga un sujeto tácito. Después identifica cuál es el sujeto y explica cómo lo reconociste.",
-        explanation: { steps: ["El sujeto tácito no aparece escrito, pero se deduce por la conjugación del verbo.", "Ejemplo: “Llegamos temprano”. El sujeto es nosotros/nosotras."] }
-      },
-      {
-        id: 14, subject: "Historia", subjectBadgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-        open: true, question: "Describe dos consecuencias importantes de la Segunda Guerra Mundial y explica por qué fueron relevantes.",
-        explanation: { steps: ["Entre las consecuencias se encuentran la creación de la ONU, la división de Alemania y el nuevo orden mundial de la Guerra Fría.", "La respuesta debe explicar la relevancia de dos consecuencias."] }
-      },
-      {
-        id: 15, subject: "Química", subjectBadgeClass: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-        open: true, question: "Explica qué significa que el carbono sea tetravalente y menciona por qué esta propiedad es importante en la química orgánica.",
-        explanation: { steps: ["El carbono puede formar cuatro enlaces covalentes.", "Esto permite construir cadenas y estructuras moleculares complejas, base de muchos compuestos orgánicos."] }
-      }
+
     ];
 
     let currentQuestionIndex = 0;
@@ -572,10 +547,23 @@
     const aiResponseText = document.getElementById('aiResponseText');
     const closeAiModal = document.getElementById('closeAiModal');
 
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
     function initQuiz() {
       currentQuestionIndex = 0;
       userAnswers = {};
       advanceOnModalClose = false;
+
+      // Cada intento presenta las 10 preguntas en un orden aleatorio
+      // y también mezcla las opciones de cada pregunta.
+      shuffleArray(quizData);
+      quizData.forEach(question => shuffleArray(question.options));
 
       introBanner.classList.remove('hidden');
       progressContainer.classList.remove('hidden');
