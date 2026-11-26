@@ -126,7 +126,7 @@
           <h1 class="font-display font-bold text-lg md:text-xl tracking-tight leading-none text-white">
             El Impacto de la IA en la Educación
           </h1>
-          <p class="text-xs text-slate-400 font-medium">Proyecto Escolar Interactivo • Quiz Demonstrativo</p>
+          <p class="text-xs text-slate-400 font-medium">Proyecto Escolar Interactivo • Cuestionario interactivo</p>
         </div>
       </div>
 
@@ -252,7 +252,7 @@
   </footer>
 
   <script>
-    const quizData = [
+    const questionBank = [
       {
         id: 1,
         subject: "Álgebra",
@@ -455,6 +455,86 @@
 
     ];
 
+
+    // Preguntas adicionales: el banco contiene 10 preguntas por materia.
+    const preguntasExtra = [
+      // ÁLGEBRA
+      ["Álgebra","¿Cuánto es 7 × (3 + 2)?","35",["26","50","21"],"Primero se resuelve el paréntesis: 3 + 2 = 5. Después, 7 × 5 = 35."],
+      ["Álgebra","¿Cuál es el resultado de 18 - 4 × 3?","6",["42","14","30"],"Se aplica la jerarquía de operaciones: primero 4 × 3 = 12 y después 18 - 12 = 6."],
+      ["Álgebra","Si 2x = 18, ¿cuánto vale x?","9",["16","20","36"],"Se divide ambos lados entre 2: x = 18 / 2 = 9."],
+      ["Álgebra","¿Cuál es el desarrollo de (x + 3)²?","x² + 6x + 9",["x² + 9","x² + 3x + 9","x² + 6"],"Se usa (a + b)² = a² + 2ab + b². Por eso resulta x² + 6x + 9."],
+      ["Álgebra","¿Cuál es el valor de 5² - 3²?","16",["4","34","8"],"Primero se calculan las potencias: 25 - 9 = 16."],
+      ["Álgebra","¿Qué expresión representa el doble de un número menos 7?","2x - 7",["x² - 7","2(x - 7)","x - 14"],"El doble de un número x es 2x; al restarle 7 se obtiene 2x - 7."],
+      ["Álgebra","¿Cuál es la factorización de x² - 25?","(x - 5)(x + 5)",["(x - 25)(x + 1)","(x - 5)²","(x + 5)²"],"Es una diferencia de cuadrados: a² - b² = (a - b)(a + b)."],
+      ["Álgebra","Si y = 3x y x = 4, ¿cuánto vale y?","12",["7","1","16"],"Se sustituye x por 4: y = 3(4) = 12."],
+
+      // CÁLCULO
+      ["Cálculo","¿Cuál es la derivada de f(x) = 4x³?","12x²",["4x²","12x³","3x⁴"],"Por la regla de la potencia, se multiplica por el exponente y se reduce este en uno: 4 · 3x² = 12x²."],
+      ["Cálculo","¿Cuál es la derivada de una constante, por ejemplo f(x) = 9?","0",["9","1","x"],"La derivada de cualquier constante es cero, porque no cambia respecto de x."],
+      ["Cálculo","¿Cuál es una antiderivada de 2x?","x² + C",["2x² + C","2 + C","x + C"],"La integral de 2x es x² + C, ya que la derivada de x² es 2x."],
+      ["Cálculo","¿Cuánto vale el límite de x + 2 cuando x tiende a 3?","5",["3","2","6"],"Como es una función continua, se sustituye directamente: 3 + 2 = 5."],
+      ["Cálculo","¿Cuál es la derivada de f(x) = 5x⁴?","20x³",["5x³","20x⁴","4x⁵"],"Aplicando la regla de la potencia: 5 · 4x³ = 20x³."],
+      ["Cálculo","¿Qué indica la derivada de una función en un punto?","La tasa de cambio instantánea",["El área total bajo la curva","El valor promedio de todos sus puntos","La longitud del eje x"],"La derivada representa la tasa de cambio instantánea y, geométricamente, la pendiente de la tangente."],
+      ["Cálculo","¿Cuál es el resultado de la integral indefinida de 3 dx?","3x + C",["3 + C","x³ + C","3x² + C"],"La integral de una constante k es kx + C. En este caso, 3x + C."],
+      ["Cálculo","Si f'(x) es positiva en un intervalo, ¿qué sucede con f(x) en ese intervalo?","La función es creciente",["La función es decreciente","La función es constante","La función no está definida"],"Una derivada positiva indica que la función aumenta conforme aumenta x."],
+
+      // GRAMÁTICA / ESPAÑOL
+      ["Gramática / Español","¿Cuál palabra está escrita correctamente?","Excepción",["Ecepción","Exepción","Escepción"],"Excepción se escribe con x y c."],
+      ["Gramática / Español","¿Cuál es el predicado en «Los estudiantes prepararon el proyecto»?","prepararon el proyecto",["Los estudiantes","el proyecto","Los estudiantes prepararon"],"El predicado expresa lo que hace o se dice del sujeto: prepararon el proyecto."],
+      ["Gramática / Español","¿Qué clase de palabra es «rápidamente»?","Adverbio",["Sustantivo","Adjetivo","Verbo"],"Rápidamente modifica la manera en que se realiza una acción; es un adverbio de modo."],
+      ["Gramática / Español","¿Cuál oración tiene correctamente los signos de interrogación?","¿Dónde está mi cuaderno?",["Dónde está mi cuaderno?","¿Dónde está mi cuaderno.","¡Dónde está mi cuaderno?"],"En español las preguntas directas llevan signo de apertura y de cierre."],
+      ["Gramática / Español","¿Cuál es el plural correcto de «lápiz»?","Lápices",["Lápizs","Lápizes","Lápiceses"],"Las palabras terminadas en z cambian la z por c y agregan -es."],
+      ["Gramática / Español","¿Qué función cumple el adjetivo en una oración?","Describir o calificar al sustantivo",["Indicar una acción","Unir dos oraciones","Expresar una cantidad exacta siempre"],"El adjetivo aporta una característica o cualidad del sustantivo."],
+      ["Gramática / Español","¿Cuál conector expresa oposición?","Sin embargo",["Por lo tanto","Además","Por ejemplo"],"«Sin embargo» introduce una idea contraria o una objeción."],
+      ["Gramática / Español","¿Cuál palabra es esdrújula?","Música",["Reloj","Papel","Camión"],"Música tiene la sílaba tónica en la antepenúltima sílaba; por eso lleva tilde."],
+
+      // HISTORIA
+      ["Historia","¿En qué año comenzó la Independencia de México?","1810",["1821","1910","1808"],"El movimiento inició el 16 de septiembre de 1810 con el llamado de Miguel Hidalgo."],
+      ["Historia","¿En qué año se consumó la Independencia de México?","1821",["1810","1847","1857"],"La consumación ocurrió en 1821, con la entrada del Ejército Trigarante a la Ciudad de México."],
+      ["Historia","¿Quién fue el primer presidente de México?","Guadalupe Victoria",["Benito Juárez","Agustín de Iturbide","Vicente Guerrero"],"Guadalupe Victoria asumió la presidencia en 1824."],
+      ["Historia","¿Qué acontecimiento se conmemora el 20 de noviembre en México?","El inicio de la Revolución Mexicana",["La consumación de la Independencia","La promulgación de la Constitución de 1917","La Expropiación Petrolera"],"La Revolución Mexicana comenzó el 20 de noviembre de 1910."],
+      ["Historia","¿En qué año se promulgó la Constitución Política mexicana vigente?","1917",["1857","1824","1929"],"La Constitución fue promulgada el 5 de febrero de 1917."],
+      ["Historia","¿Qué cultura construyó la ciudad de Chichén Itzá?","Maya",["Olmeca","Inca","Purépecha"],"Chichén Itzá fue una importante ciudad de la civilización maya en la península de Yucatán."],
+      ["Historia","¿Qué muro cayó en 1989 y simbolizó el fin de la división de Berlín?","El Muro de Berlín",["La Muralla China","El Muro de Adriano","La Línea Maginot"],"La apertura y caída del Muro de Berlín ocurrió en noviembre de 1989."],
+      ["Historia","¿Qué documento limitó el poder del rey inglés en 1215?","La Carta Magna",["La Declaración de Independencia","El Código de Hammurabi","El Tratado de Versalles"],"La Carta Magna de 1215 estableció límites al poder del monarca inglés."],
+
+      // QUÍMICA
+      ["Química","¿Cuál es el símbolo químico del sodio?","Na",["S","So","Sd"],"El símbolo Na proviene del nombre latino natrium."],
+      ["Química","¿Qué partícula subatómica tiene carga negativa?","Electrón",["Protón","Neutrón","Núcleo"],"El electrón tiene carga eléctrica negativa; el protón es positivo y el neutrón no tiene carga."],
+      ["Química","¿Cuál es la fórmula química del agua?","H₂O",["CO₂","O₂H","H₂O₂"],"Cada molécula de agua contiene dos átomos de hidrógeno y uno de oxígeno."],
+      ["Química","¿Qué tipo de enlace se forma cuando dos átomos comparten electrones?","Covalente",["Iónico","Metálico","Nuclear"],"En un enlace covalente los átomos comparten uno o más pares de electrones."],
+      ["Química","¿Cuál es el gas más abundante en la atmósfera terrestre?","Nitrógeno",["Oxígeno","Dióxido de carbono","Hidrógeno"],"El nitrógeno constituye aproximadamente el 78 % del aire seco."],
+      ["Química","¿Qué indica el número atómico de un elemento?","La cantidad de protones",["La cantidad de neutrones solamente","La masa total del átomo","La cantidad de moléculas"],"El número atómico corresponde al número de protones en el núcleo."],
+      ["Química","¿Qué sucede con el papel tornasol azul en una solución ácida?","Cambia a rojo",["Cambia a verde","Permanece azul siempre","Cambia a amarillo"],"Las soluciones ácidas hacen que el papel tornasol azul cambie a rojo."],
+      ["Química","¿Cuál de estos elementos es un gas noble?","Neón",["Cloro","Sodio","Calcio"],"El neón pertenece al grupo 18, conocido como gases nobles." ]
+    ];
+
+    const coloresMateria = {
+      "Álgebra": "bg-blue-500/10 text-blue-400 border-blue-500/20",
+      "Cálculo": "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+      "Gramática / Español": "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+      "Historia": "bg-amber-500/10 text-amber-400 border-amber-500/20",
+      "Química": "bg-rose-500/10 text-rose-400 border-rose-500/20"
+    };
+
+    preguntasExtra.forEach((item, index) => {
+      const [subject, question, correctAnswer, wrongAnswers, explanation] = item;
+      questionBank.push({
+        id: 100 + index,
+        subject,
+        subjectBadgeClass: coloresMateria[subject],
+        question,
+        options: shuffleArray([
+          { text: correctAnswer, correct: true },
+          ...wrongAnswers.map(text => ({ text, correct: false }))
+        ]),
+        explanation: { steps: [explanation] }
+      });
+    });
+
+    // Banco original inmutable: cada intento parte de las preguntas y opciones originales.
+    let quizData = [];
+
     let currentQuestionIndex = 0;
     let userAnswers = {}; // { questionId: { selectedIndex, usedAI: boolean, isCorrect: boolean } }
     let aiTimer = null;
@@ -474,8 +554,8 @@
     const securityStartBtn = document.getElementById('securityStartBtn');
     let examStarted = false;
     let securityLocked = false;
-    const EXAM_ACTIVE_KEY = 'iaQuizAttemptActive_v1';
-    const EXAM_VIOLATION_KEY = 'iaQuizViolation_v1';
+    const EXAM_ACTIVE_KEY = 'iaQuizAttemptActive_v2';
+    const EXAM_VIOLATION_KEY = 'iaQuizViolation_v2';
 
     function showSecurityLock(reason) {
       if (securityLocked) return;
@@ -561,15 +641,39 @@
       return array;
     }
 
+    let lastAttemptSignature = '';
+
     function initQuiz() {
       currentQuestionIndex = 0;
       userAnswers = {};
       advanceOnModalClose = false;
 
-      // Cada intento presenta las 10 preguntas en un orden aleatorio
-      // y también mezcla las opciones de cada pregunta.
-      shuffleArray(quizData);
-      quizData.forEach(question => shuffleArray(question.options));
+      // Elegir 2 preguntas al azar de cada una de las 5 materias.
+      // Así cada intento contiene 10 preguntas, pero no necesariamente las mismas.
+      let attempts = 0;
+      let signature = '';
+      do {
+        const materias = ["Álgebra", "Cálculo", "Gramática / Español", "Historia", "Química"];
+        quizData = [];
+        materias.forEach(materia => {
+          const candidatas = questionBank
+            .filter(question => question.subject === materia)
+            .map(question => ({
+              ...question,
+              options: question.options.map(option => ({ ...option })),
+              explanation: question.explanation
+                ? { ...question.explanation, steps: [...(question.explanation.steps || [])] }
+                : question.explanation
+            }));
+          shuffleArray(candidatas);
+          quizData.push(...candidatas.slice(0, 2));
+        });
+        shuffleArray(quizData);
+        quizData.forEach(question => shuffleArray(question.options));
+        signature = quizData.map(question => question.id).sort((a, b) => a - b).join(",");
+        attempts++;
+      } while (signature === lastAttemptSignature && attempts < 20);
+      lastAttemptSignature = signature;
 
       introBanner.classList.remove('hidden');
       progressContainer.classList.remove('hidden');
@@ -961,7 +1065,7 @@
 
     resetQuizBtn.addEventListener('click', initQuiz);
 
-    initQuiz();
+    // El cuestionario se prepara al iniciar el intento en pantalla completa.
   </script>
 </body>
 </html>
