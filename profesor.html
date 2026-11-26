@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del profesor</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #020617;
+            color: #f1f5f9;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #60a5fa, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .bg-sparkle-gradient {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777);
+        }
+
+        .menu-btn {
+            transition: all 0.2s ease;
+        }
+
+        .menu-btn:hover {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(167, 139, 250, 0.4);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <header class="border-b border-white/10 bg-slate-900/70">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gradient">
+                    Panel del profesor
+                </h1>
+                <p class="text-sm text-slate-400">
+                    Administración de clases y cuestionarios
+                </p>
+            </div>
+
+            <button id="btnCerrarSesion"
+                class="px-4 py-2 rounded-xl bg-red-500/10 text-red-300 border border-red-400/20 hover:bg-red-500/20">
+                Cerrar sesión
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8">
+
+        <section class="mb-8">
+            <h2 class="text-3xl font-bold mb-2">
+                ¡Bienvenido, profesor!
+            </h2>
+            <p class="text-slate-400">
+                Desde aquí podrás administrar tus materias, clases y cuestionarios.
+            </p>
+        </section>
+
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+            <button id="btnMaterias" class="glass-card menu-btn rounded-2xl p-6 text-left">
+                <div class="text-3xl mb-4">📚</div>
+                <h3 class="text-xl font-semibold mb-2">Mis materias</h3>
+                <p class="text-sm text-slate-400">
+                    Consulta las materias disponibles.
+                </p>
+            </button>
+
+            <button id="btnClases" class="glass-card menu-btn rounded-2xl p-6 text-left">
+                <div class="text-3xl mb-4">👥</div>
+                <h3 class="text-xl font-semibold mb-2">Mis clases</h3>
+                <p class="text-sm text-slate-400">
+                    Crea grupos y administra a tus alumnos.
+                </p>
+            </button>
+
+            <button id="btnCuestionarios" class="glass-card menu-btn rounded-2xl p-6 text-left">
+                <div class="text-3xl mb-4">📝</div>
+                <h3 class="text-xl font-semibold mb-2">Mis cuestionarios</h3>
+                <p class="text-sm text-slate-400">
+                    Crea, edita y publica cuestionarios.
+                </p>
+            </button>
+
+            <button id="btnResultados" class="glass-card menu-btn rounded-2xl p-6 text-left">
+                <div class="text-3xl mb-4">📊</div>
+                <h3 class="text-xl font-semibold mb-2">Resultados</h3>
+                <p class="text-sm text-slate-400">
+                    Consulta intentos y calificaciones.
+                </p>
+            </button>
+
+            <button id="btnConfiguracion" class="glass-card menu-btn rounded-2xl p-6 text-left">
+                <div class="text-3xl mb-4">⚙️</div>
+                <h3 class="text-xl font-semibold mb-2">Configuración</h3>
+                <p class="text-sm text-slate-400">
+                    Configura el uso de IA y la evaluación.
+                </p>
+            </button>
+
+        </section>
+
+        <section id="seccionContenido"
+            class="glass-card rounded-2xl p-6 mt-8">
+
+            <h2 class="text-xl font-semibold mb-2">
+                Inicio
+            </h2>
+
+            <p class="text-slate-400">
+                Selecciona una sección para comenzar a administrar tu espacio de trabajo.
+            </p>
+
+        </section>
+
+    </main>
+
+    <script type="module" src="profesor.js"></script>
+
+</body>
+</html>
